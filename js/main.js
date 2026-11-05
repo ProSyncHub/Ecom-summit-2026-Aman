@@ -229,8 +229,12 @@
   /* ---------- Agenda: show the first 3 sessions, "Show more" reveals the rest ---------- */
   var VISIBLE_AT_START = 3;
   var tlItems = $$(".timeline__list > .tl-item");
-  if (timeline && tlItems.length > VISIBLE_AT_START) {
+  var tlList = $(".timeline__list");
+  if (timeline && tlList && tlItems.length > VISIBLE_AT_START) {
     var extra = tlItems.slice(VISIBLE_AT_START);
+    extra.forEach(function (li) {
+      li.classList.add("tl-extra");
+    });
     var moreBtn = document.createElement("button");
     moreBtn.type = "button";
     moreBtn.className = "tl-more";
@@ -239,27 +243,67 @@
       '<span class="tl-more__label"></span>' +
       '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg>';
     var moreLabel = $(".tl-more__label", moreBtn);
-    var setMore = function (open) {
-      extra.forEach(function (li) {
-        li.hidden = !open;
-        if (open) li.classList.add("is-visible");
-      });
+    /* Slow expand/collapse (same 1.1s motion as the module lineup): the list is
+       clipped to the height of the first cards and its height is animated. */
+    var collapsedHeight = function () {
+      var top = tlList.getBoundingClientRect().top;
+      var last = tlItems[VISIBLE_AT_START - 1].getBoundingClientRect();
+      return Math.ceil(last.bottom - top);
+    };
+    var settle = null;
+    var setMore = function (open, animate) {
+      if (settle) {
+        clearTimeout(settle);
+        settle = null;
+      }
+      var from = tlList.getBoundingClientRect().height;
+      /* measure the target height with transitions off */
+      timeline.classList.add("tl-measuring");
+      tlList.style.height = "";
       timeline.classList.toggle("is-collapsed", !open);
+      var to = open ? tlList.scrollHeight : collapsedHeight();
+      if (animate) {
+        timeline.classList.toggle("is-collapsed", open); /* back to the start layout */
+        tlList.style.overflow = "hidden";
+        tlList.style.height = from + "px";
+        void tlList.offsetHeight;
+      }
+      timeline.classList.remove("tl-measuring");
+      if (animate) void tlList.offsetHeight;
+      timeline.classList.toggle("is-collapsed", !open);
+      extra.forEach(function (li) {
+        if (open) li.classList.add("is-visible");
+        li.inert = !open;
+      });
+      tlList.style.overflow = "hidden";
+      tlList.style.height = to + "px";
+      var done = function () {
+        settle = null;
+        if (open) {
+          tlList.style.height = "";
+          tlList.style.overflow = "";
+        }
+      };
+      if (animate && !reduceMotion) settle = setTimeout(done, 1200);
+      else done();
       moreBtn.setAttribute("aria-expanded", String(open));
       moreBtn.classList.toggle("is-open", open);
-      moreLabel.textContent = open ? "Show Less" : "Show More";
+      moreLabel.textContent = open ? "View Less" : "View More";
       window.dispatchEvent(new Event("scroll"));
     };
+    window.addEventListener("resize", function () {
+      if (moreBtn.getAttribute("aria-expanded") !== "true") setMore(false, false);
+    });
     moreBtn.addEventListener("click", function () {
       var open = moreBtn.getAttribute("aria-expanded") !== "true";
-      setMore(open);
+      setMore(open, true);
       if (!open) timeline.scrollIntoView({ block: "center", behavior: reduceMotion ? "auto" : "smooth" });
     });
     var wrap = document.createElement("div");
     wrap.className = "tl-more-wrap";
     wrap.appendChild(moreBtn);
     timeline.parentNode.insertBefore(wrap, timeline.nextSibling);
-    setMore(false);
+    setMore(false, false);
   }
 
   /* ---------- Limited-time offer countdown (sticky bottom bar) ----------
