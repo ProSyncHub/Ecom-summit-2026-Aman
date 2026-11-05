@@ -53,13 +53,13 @@ window.SITE_CONFIG = {
     email: "support@prosyncedu.com", // CONFIRM public support address
     phone: null, // CONFIRM e.g. '+91 XXXXX XXXXX'
     instagram: "https://www.instagram.com/amarbediofficial/",
+    linkedinAmar: "https://in.linkedin.com/company/prosync-infotech", // TODO: replace with  Amar Bedi personal LinkedIn URL
   },
 
   /* Optional sections already in index.html with [bracketed] placeholders.
      Fill in the placeholders, THEN set the flag to true. */
   sections: {
     sharkTank: true, // Shark Tank brand insights (DEMO content: replace before launch)
-    behindScenes: true, // behind-the-scenes reel (DEMO content)
     howYoullLearn: true, // online/offline access strip (DEMO content)
     valueStack: true, // value stack, bonuses, guarantee (DEMO content)
   },
