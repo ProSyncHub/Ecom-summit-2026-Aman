@@ -59,7 +59,6 @@ window.SITE_CONFIG = {
   /* Optional sections already in index.html with [bracketed] placeholders.
      Fill in the placeholders, THEN set the flag to true. */
   sections: {
-    sharkTank: true, // Shark Tank brand insights (DEMO content: replace before launch)
     howYoullLearn: true, // online/offline access strip (DEMO content)
     valueStack: true, // value stack, bonuses, guarantee (DEMO content)
   },
