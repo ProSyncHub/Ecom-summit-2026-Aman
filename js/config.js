@@ -44,8 +44,8 @@ window.SITE_CONFIG = {
     /* One primary conversion: 'Lead' (recommended for free registration)
        or 'CompleteRegistration'. Never both. */
     primaryEvent: "Lead",
-    /* true = nothing loads until the visitor accepts the cookie banner */
-    requireConsent: false,
+    /* true = tracking stays off (there is no consent banner on this site); only enable tracking if you add one */
+    requireConsent: true, // DPDP: opt-in only; do not set to false
     debug: false, // true logs every event to the console
   },
 

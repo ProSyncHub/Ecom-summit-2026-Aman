@@ -197,6 +197,7 @@
 
   window.Tracking = {
     init: init,
+    start: start,
     track: track,
     getAttribution: getAttribution,
     hasConsent: hasConsent,
